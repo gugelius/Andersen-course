@@ -1,0 +1,5 @@
+office, 200, true
+garden, 250, true
+city-centre, 300, true
+castle, 270, false
+library, 400, true

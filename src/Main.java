@@ -1,6 +1,5 @@
 import java.util.InputMismatchException;
 import java.util.Scanner;
-
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
     private static final CoworkingSpaceManager manager = new CoworkingSpaceManager(scanner);
@@ -28,6 +27,7 @@ public class Main {
     public static void main(String[] args) {
 
         System.out.println(WELCOME_MSG);
+        manager.loadSpaces();
         mainMenu();
     }
 
@@ -39,6 +39,7 @@ public class Main {
                     case 1 -> adminMenu();
                     case 2 -> userMenu();
                     case 3 -> {
+                        manager.finalStateWriter();
                         exit = true;
                         System.out.println(BYE);
                     }
