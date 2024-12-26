@@ -1,3 +1,7 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -11,10 +15,45 @@ public class CoworkingSpaceManager {
     private final List<CoworkingSpace> spaces = new ArrayList<>();
     private final List<Reservation> reservations = new ArrayList<>();
     private int reservationIdCounter = 1, coworkingSpaceIdCounter = 1;
+    private static final String INPUT_FILE_NAME = "input.txt";
+    private static final String OUTPUT_FILE_NAME = "out.txt";
     public CoworkingSpaceManager(Scanner scanner){
         this.scanner = scanner;
     }
-
+    public List<CoworkingSpace> getSpaces() {
+        return spaces;
+    }
+    public List<CoworkingSpace> getAvailableSpaces() {
+        List<CoworkingSpace> availableSpaces = new ArrayList<>();
+        for (CoworkingSpace space : spaces) {
+            if (space.isStatus()) {
+                availableSpaces.add(space);
+            }
+        }
+        return availableSpaces;
+    }
+    public void loadSpaces(){
+        try(BufferedReader reader = new BufferedReader(new FileReader(INPUT_FILE_NAME))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                try {
+                    String[] parts = line.split(",");
+                    if (parts.length == 3) {
+                        String type = parts[0].trim();
+                        float price = Float.parseFloat(parts[1].trim());
+                        boolean status = Boolean.parseBoolean(parts[2].trim());
+                        spaces.add(new CoworkingSpace(coworkingSpaceIdCounter++, type, price, status));
+                    } else {
+                        throw new InvalidDataFormatException("Incorrect line format in input file: " + line);
+                    }
+                } catch (InvalidDataFormatException e) {
+                    System.out.println("Error loading space " + e.getMessage());
+                }
+            }
+        } catch (IOException e){
+            System.out.println("Error while loading spaces: " + e);
+        }
+    }
     public void createSpace() {
         scanner.nextLine();
         System.out.println("Enter space type:");
@@ -39,6 +78,35 @@ public class CoworkingSpaceManager {
         spaces.add(new CoworkingSpace(coworkingSpaceIdCounter++, type, price, status));
         System.out.println("Coworking space added.");
     }
+    public boolean spaceExists(int id) {
+        for (CoworkingSpace space : spaces) {
+            if (space.getId() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean isSpacesEmpty(){
+        return spaces.size() == 0;
+    }
+    public boolean isSpaceAvailable(int id) {
+        for (CoworkingSpace space : spaces) {
+            if (space.getId() == id && space.isStatus()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public void printAvailableSpaces() {
+        System.out.println("Available Spaces:");
+        if (getAvailableSpaces().size() != 0) {
+            for (CoworkingSpace space : getAvailableSpaces()) {
+                System.out.println(space);
+            }
+        }else{
+            System.out.println("There are no available spaces!");
+        }
+    }
     public void removeSpace() {
         if (isSpacesEmpty()){
             System.out.println("There are no existing coworking spaces!");
@@ -56,57 +124,8 @@ public class CoworkingSpaceManager {
         spaces.removeIf(space -> space.getId() == finalId);
         System.out.println("Coworking space removed.");
     }
-
-    public List<CoworkingSpace> getSpaces() {
-        return spaces;
-    }
-
-    public List<CoworkingSpace> getAvailableSpaces() {
-        List<CoworkingSpace> availableSpaces = new ArrayList<>();
-        for (CoworkingSpace space : spaces) {
-            if (space.isStatus()) {
-                availableSpaces.add(space);
-            }
-        }
-        return availableSpaces;
-    }
-    public void printAvailableSpaces() {
-        System.out.println("Available Spaces:");
-        if (getAvailableSpaces().size() != 0) {
-            for (CoworkingSpace space : getAvailableSpaces()) {
-                System.out.println(space);
-            }
-        }else{
-            System.out.println("There are no available spaces!");
-        }
-    }
-    public void printAllReservations(){
-        if (isReservationsEmpty()){
-            System.out.println("There are no existing reservations!");
-            return;
-        }
-        System.out.println("All Reservations:");
-        for (Reservation res : getReservations()) {
-            System.out.println(res);
-        }
-    }
     public List<Reservation> getReservations() {
         return reservations;
-    }
-
-    public boolean spaceExists(int id) {
-        for (CoworkingSpace space : spaces) {
-            if (space.getId() == id) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public boolean isSpacesEmpty(){
-        return spaces.size() == 0;
-    }
-    public boolean isReservationsEmpty(){
-        return reservations.size() == 0;
     }
     public void getUserReservations(String userName){
         boolean hasReservations = false;
@@ -120,15 +139,19 @@ public class CoworkingSpaceManager {
             System.out.println("You have no reservations.");
         }
     }
-    public boolean isSpaceAvailable(int id) {
-        for (CoworkingSpace space : spaces) {
-            if (space.getId() == id && space.isStatus()) {
-                return true;
-            }
+    public void printAllReservations(){
+        if (isReservationsEmpty()){
+            System.out.println("There are no existing reservations!");
+            return;
         }
-        return false;
+        System.out.println("All Reservations:");
+        for (Reservation res : getReservations()) {
+            System.out.println(res);
+        }
     }
-
+    public boolean isReservationsEmpty(){
+        return reservations.size() == 0;
+    }
     public void makeReservation(String userName) {
         if (isSpacesEmpty()) {
             System.out.println("There are no existing coworking spaces! You can't make a reservation without available spaces!");
@@ -172,12 +195,15 @@ public class CoworkingSpaceManager {
                 System.out.println("Invalid time format. Please enter the time in HH:MM format.");
             }
         }
-        if (!isTimeSlotAvailable(spaceId, date.toString(), startTime.toString(), endTime.toString())) {
-            System.out.println("Space is not available at this time slot.");
-            return;
+        try {
+            if (!isTimeSlotAvailable(spaceId, date.toString(), startTime.toString(), endTime.toString())) {
+                throw new TimeSlotNotAvailableException("Space is not available at this time slot!");
+            }
+            reservations.add(new Reservation(reservationIdCounter++, userName, spaceId, date.toString(), startTime.toString(), endTime.toString()));
+            System.out.println("Reservation made.");
+        } catch (TimeSlotNotAvailableException e){
+            System.out.println("Error while making a reservation " + e);
         }
-        reservations.add(new Reservation(reservationIdCounter++, userName, spaceId, date.toString(), startTime.toString(), endTime.toString()));
-        System.out.println("Reservation made.");
     }
 
     public void cancelReservation() {
@@ -215,5 +241,19 @@ public class CoworkingSpaceManager {
             }
         }
         return true;
+    }
+    public void finalStateWriter(){
+        try (FileWriter writer = new FileWriter(OUTPUT_FILE_NAME)){
+            writer.write("All reservations:\n");
+            for(Reservation res : getReservations()){
+                writer.write(res.toString()+"\n");
+            }
+            writer.write("All spaces:\n");
+            for(CoworkingSpace space : getSpaces()){
+                writer.write(space.toString()+"\n");
+            }
+        } catch (IOException e){
+            System.out.println("Error" + e);
+        }
     }
 }
