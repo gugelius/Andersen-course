@@ -1,3 +1,4 @@
+import java.lang.reflect.Method;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 public class Main {
@@ -23,9 +24,19 @@ public class Main {
             3. View my reservations
             4. Cancel a reservation
             5. Back to main menu""";
-
     public static void main(String[] args) {
-
+        try {
+            String classPath = "C:\\Users\\GUGELIUSSS\\Desktop\\study\\Andersen-course\\src";
+            ClassLoader parentClassLoader = GugeliusClassLoader.class.getClassLoader();
+            GugeliusClassLoader myClassLoader = new GugeliusClassLoader(classPath, parentClassLoader);
+            Class<?> loadedClass = myClassLoader.loadClass("TestMessage");
+            System.out.println("Class " + loadedClass.getName() + " successfully loaded.");
+            Object instance = loadedClass.newInstance();
+            Method method = loadedClass.getMethod("Message");
+            method.invoke(instance);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println(WELCOME_MSG);
         manager.loadSpaces();
         mainMenu();
