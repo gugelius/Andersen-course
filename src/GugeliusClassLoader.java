@@ -14,7 +14,7 @@ public class GugeliusClassLoader extends ClassLoader {
         String path = classPath + File.separator + name.replace('.', File.separatorChar) + ".class";
         try {
             byte[] classData = loadClassData(path);
-            System.out.println("Загружаю класс: " + name);
+            System.out.println("loading class: " + name);
             return defineClass(name, classData, 0, classData.length);
         } catch (IOException e) {
             throw new ClassNotFoundException("Class " + name + " not found", e);

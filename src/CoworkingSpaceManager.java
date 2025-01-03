@@ -23,7 +23,7 @@ public class CoworkingSpaceManager {
     public List<CoworkingSpace> getSpaces() {
         return spaces;
     }
-    public List<CoworkingSpace> getAvailableSpaces() {
+    public List<? extends CoworkingSpace> getAvailableSpaces() {
         List<CoworkingSpace> availableSpaces = new ArrayList<>();
         for (CoworkingSpace space : spaces) {
             if (space.isStatus()) {
@@ -124,7 +124,7 @@ public class CoworkingSpaceManager {
         spaces.removeIf(space -> space.getId() == finalId);
         System.out.println("Coworking space removed.");
     }
-    public List<Reservation> getReservations() {
+    public List<? extends Reservation> getReservations() {
         return reservations;
     }
     public void getUserReservations(String userName){
