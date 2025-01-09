@@ -1,6 +1,7 @@
 import java.lang.reflect.Method;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
     private static final CoworkingSpaceManager manager = new CoworkingSpaceManager(scanner);
@@ -100,7 +101,7 @@ public class Main {
                     case 1 -> manager.printAvailableSpaces();
                     case 2 -> manager.makeReservation(userName);
                     case 3 -> manager.getUserReservations(userName);
-                    case 4 -> manager.cancelReservation();
+                    case 4 -> manager.cancelReservation(userName);
                     case 5 -> backToMainMenu = true;
                     default -> System.out.println(CORRECT_VALUE_MSG);
                 }
