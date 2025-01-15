@@ -1,3 +1,5 @@
+package org.example;
+
 public class CoworkingSpace {
     private int id;
     private String type;
