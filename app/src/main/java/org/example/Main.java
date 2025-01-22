@@ -1,3 +1,5 @@
+package org.example;
+
 import java.lang.reflect.Method;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -27,10 +29,11 @@ public class Main {
             5. Back to main menu""";
     public static void main(String[] args) {
         try {
-            String classPath = "C:\\Users\\GUGELIUSSS\\Desktop\\study\\Andersen-course\\src";
+            //String classPath = "C:\\Users\\GUGELIUSSS\\Desktop\\study\\Andersen-course\\src";
+            String classPath = "C:\\Java Learn\\Andersen-course\\app\\build\\classes\\java\\main";
             ClassLoader parentClassLoader = GugeliusClassLoader.class.getClassLoader();
             GugeliusClassLoader myClassLoader = new GugeliusClassLoader(classPath, parentClassLoader);
-            Class<?> loadedClass = myClassLoader.loadClass("TestMessage");
+            Class<?> loadedClass = myClassLoader.loadClass("org.example.TestMessage");
             System.out.println("Class " + loadedClass.getName() + " successfully loaded.");
             Object instance = loadedClass.newInstance();
             Method method = loadedClass.getMethod("Message");

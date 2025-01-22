@@ -1,3 +1,5 @@
+package org.example;
+
 class Reservation {
     private int id;
     private String userName;
