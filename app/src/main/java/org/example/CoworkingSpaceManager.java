@@ -1,3 +1,5 @@
+package org.example;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -13,17 +15,22 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class CoworkingSpaceManager {
-    private final Scanner scanner;
+    private final InputProvider inputProvider;
+//    private final Scanner scanner;
     private final List<CoworkingSpace> spaces = new ArrayList<>();
     private final List<Reservation> reservations = new ArrayList<>();
     private int reservationIdCounter = 1, coworkingSpaceIdCounter = 1;
-    private static final String INPUT_FILE_NAME = "input.txt";
-    private static final String OUTPUT_FILE_NAME = "out.txt";
-    public CoworkingSpaceManager(Scanner scanner){
-        this.scanner = scanner;
+    private static final String INPUT_FILE_NAME = "C:\\Users\\GUGELIUSSS\\Desktop\\study\\Andersen-course\\app\\src\\main\\resources\\input.txt";
+    private static final String OUTPUT_FILE_NAME = "C:\\Users\\GUGELIUSSS\\Desktop\\study\\Andersen-course\\app\\src\\main\\resources\\out.txt";
+    public CoworkingSpaceManager(InputProvider inputProvider){
+        this.inputProvider = inputProvider;
     }
 
-    public boolean isAvailableSpaces(){
+    public List<CoworkingSpace> getSpaces() {
+        return spaces;
+    }
+
+    private boolean AvailableSpacesExist(){
         return spaces.stream()
                 .anyMatch(CoworkingSpace::isStatus);
     }
@@ -56,42 +63,42 @@ public class CoworkingSpaceManager {
     }
 
     public void createSpace() {
-        scanner.nextLine();
+        inputProvider.nextLine();
         System.out.println("Enter space type:");
-        String type = scanner.nextLine().trim();
+        String type = inputProvider.nextLine().trim();
 
         while (type.isEmpty()) {
             System.out.println("Space type cannot be empty.");
-            type = scanner.nextLine().trim();
+            type = inputProvider.nextLine().trim();
         }
 
         System.out.println("Enter price:");
-        float price = scanner.nextFloat();
+        float price = inputProvider.nextFloat();
 
         while (price <= 0) {
             System.out.println("Invalid price. Price must be a positive number.");
-            price = scanner.nextFloat();
+            price = inputProvider.nextFloat();
         }
 
         System.out.println("Enter availability status (true/false):");
-        boolean status = scanner.nextBoolean();
+        boolean status = inputProvider.nextBoolean();
 
         spaces.add(new CoworkingSpace(coworkingSpaceIdCounter++, type, price, status));
         System.out.println("Coworking space added.");
     }
 
-    public boolean spaceExists(int id) {
+    private boolean spaceExists(int id) {
         return spaces.stream()
                 .anyMatch(space -> Optional.ofNullable(space)
                         .map(s -> s.getId() == id)
                         .orElse(false));
     }
 
-    public boolean isSpacesEmpty(){
+    private boolean isSpacesEmpty(){
         return spaces.size() == 0;
     }
 
-    public boolean isSpaceAvailable(int id) {
+    private boolean isSpaceAvailable(int id) {
         return spaces.stream()
                 .anyMatch(space -> Optional.ofNullable(space)
                         .map(s -> s.getId() == id && s.isStatus())
@@ -99,14 +106,14 @@ public class CoworkingSpaceManager {
     }
 
     public void printAvailableSpaces() {
-        if(!isAvailableSpaces()){
-            System.out.println("There are no available spaces!");
-        }
-        else {
-            System.out.println("Available spaces");
+        if(AvailableSpacesExist()){
+            System.out.println("Available spaces:");
             spaces.stream()
                     .filter(CoworkingSpace::isStatus)
                     .forEach(System.out::println);
+        }
+        else {
+            System.out.println("There are no available spaces!");
         }
     }
 
@@ -117,10 +124,10 @@ public class CoworkingSpaceManager {
         }
 
         System.out.println("Enter space ID to remove:");
-        int id = scanner.nextInt();
+        int id = inputProvider.nextInt();
         while (!spaceExists(id)) {
             System.out.println("Space with this ID does not exist.");
-            id = scanner.nextInt();
+            id = inputProvider.nextInt();
         }
 
         int finalId = id;
@@ -146,19 +153,19 @@ public class CoworkingSpaceManager {
     }
 
     public void printAllReservations(){
-        if(isReservationsEmpty()){
+        if(ReservationsAreEmpty()){
             System.out.println("There are no existing reservations!");
         }
         else {
             reservations.forEach(System.out::println);
         }
     }
-    public boolean isReservationsEmpty(){
+    private boolean ReservationsAreEmpty(){
         return reservations.size() == 0;
     }
-    public boolean isReservationsEmpty(String userName){
+    private boolean ReservationsAreEmpty(String userName){
         return reservations.stream()
-                .anyMatch(reservation -> Optional.ofNullable(reservation)
+                .noneMatch(reservation -> Optional.ofNullable(reservation)
                         .map(r -> r.getUserName().equals(userName))
                         .orElse(false));
     }
@@ -169,8 +176,8 @@ public class CoworkingSpaceManager {
             return;
         }
         System.out.println("Enter space ID:");
-        int spaceId = scanner.nextInt();
-        scanner.nextLine();
+        int spaceId = inputProvider.nextInt();
+        inputProvider.nextLine();
         if (!spaceExists(spaceId) || !isSpaceAvailable(spaceId)) {
             System.out.println("Space with this ID does not exist or is not available.");
             return;
@@ -179,7 +186,7 @@ public class CoworkingSpaceManager {
         LocalDate date = null;
         while (date == null) {
             System.out.println("Enter date (YYYY-MM-DD):");
-            String dateString = scanner.nextLine();
+            String dateString = inputProvider.nextLine();
             try {
                 date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             } catch (DateTimeParseException e) {
@@ -189,7 +196,7 @@ public class CoworkingSpaceManager {
         LocalTime startTime = null;
         while (startTime == null) {
             System.out.println("Enter start time (HH:MM):");
-            String startTimeString = scanner.nextLine();
+            String startTimeString = inputProvider.nextLine();
             try {
                 startTime = LocalTime.parse(startTimeString, DateTimeFormatter.ofPattern("HH:mm"));
             } catch (DateTimeParseException e) {
@@ -199,7 +206,7 @@ public class CoworkingSpaceManager {
         LocalTime endTime = null;
         while (endTime == null) {
             System.out.println("Enter end time (HH:MM):");
-            String endTimeString = scanner.nextLine();
+            String endTimeString = inputProvider.nextLine();
             try {
                 endTime = LocalTime.parse(endTimeString, DateTimeFormatter.ofPattern("HH:mm"));
             } catch (DateTimeParseException e) {
@@ -218,13 +225,13 @@ public class CoworkingSpaceManager {
     }
 
     public void cancelReservation(String userName) {
-        if(!isReservationsEmpty(userName)){
+        if(ReservationsAreEmpty(userName)){
             System.out.println("There are no existing reservations! You can't cancel a reservation!");
             return;
         }
         System.out.println("Enter reservation ID to cancel:");
-        int reservationId = scanner.nextInt();
-        scanner.nextLine();
+        int reservationId = inputProvider.nextInt();
+        inputProvider.nextLine();
         if (!reservationExists(reservationId)) {
             System.out.println("Reservation with this ID does not exist.");
             return;
@@ -234,14 +241,14 @@ public class CoworkingSpaceManager {
         System.out.println("Reservation canceled.");
     }
 
-    public boolean reservationExists(int id) {
+    private boolean reservationExists(int id) {
         return reservations.stream()
                 .anyMatch(reservation -> Optional.ofNullable(reservation)
                         .map(r -> r.getId() == id)
                         .orElse(false));
     }
 
-    public boolean isTimeSlotAvailable(int spaceId, String date, String startTime, String endTime) {
+    private boolean isTimeSlotAvailable(int spaceId, String date, String startTime, String endTime) {
         return reservations.stream()
                 .filter(res -> res.getSpaceId() == spaceId && res.getDate().equals(date))
                 .noneMatch(res ->
