@@ -21,13 +21,13 @@ class CoworkingSpaceManagerTest {
     }
 
     @Test
-    void testLoadSpaces(){
+    void givenManager_whenLoadSpaces_thenSpacesLoadedCorrectly(){
         manager.loadSpaces();
         assertEquals(manager.getSpaces().size(), LOADED_SPACES_SIZE);
     }
 
     @Test
-    void testCreateSpace() {
+    void givenValidInput_whenCreateSpace_thenSpaceIsAdded() {
         Mockito.when(mockInputProvider.nextLine())
                 .thenReturn("")
                 .thenReturn("Private Office");
@@ -48,7 +48,7 @@ class CoworkingSpaceManagerTest {
     }
 
     @Test
-    void testRemoveSpace(){
+    void givenExistingSpace_whenRemoveSpace_thenSpaceIsRemoved(){
         manager.loadSpaces();
         Mockito.when(mockInputProvider.nextInt())
                 .thenReturn(1);
@@ -58,7 +58,7 @@ class CoworkingSpaceManagerTest {
     }
 
     @Test
-    void testMakeReservation() {
+    void givenValidInput_whenMakeReservation_thenReservationIsAdded() {
         manager.loadSpaces();
 
         Mockito.when(mockInputProvider.nextInt())
@@ -78,7 +78,7 @@ class CoworkingSpaceManagerTest {
     }
 
     @Test
-    void testCancelReservation(){
+    void givenExistingReservation_whenCancelReservation_thenReservationIsRemoved(){
         manager.loadSpaces();
 
         Mockito.when(mockInputProvider.nextInt())
