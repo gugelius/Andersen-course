@@ -6,7 +6,8 @@ import java.util.Scanner;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
-    private static final CoworkingSpaceManager manager = new CoworkingSpaceManager(scanner);
+    private static final InputProvider inputProvider = new ScannerInputProvider(scanner);
+    private static final CoworkingSpaceManager manager = new CoworkingSpaceManager(inputProvider);
     private static boolean exit = false;
     private static final String WELCOME_MSG = "Welcome to Coworking Space Reservation by GUGELIUSSS", BYE = "Bye!", CORRECT_VALUE_MSG = "Enter correct value, please!";
     private static final String MAIN_MENU = """
@@ -29,8 +30,7 @@ public class Main {
             5. Back to main menu""";
     public static void main(String[] args) {
         try {
-            //String classPath = "C:\\Users\\GUGELIUSSS\\Desktop\\study\\Andersen-course\\src";
-            String classPath = "C:\\Java Learn\\Andersen-course\\app\\build\\classes\\java\\main";
+            String classPath = "C:\\Users\\GUGELIUSSS\\Desktop\\study\\Andersen-course\\app\\build\\classes\\java\\main";
             ClassLoader parentClassLoader = GugeliusClassLoader.class.getClassLoader();
             GugeliusClassLoader myClassLoader = new GugeliusClassLoader(classPath, parentClassLoader);
             Class<?> loadedClass = myClassLoader.loadClass("org.example.TestMessage");

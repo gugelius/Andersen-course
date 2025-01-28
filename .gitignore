@@ -1,6 +1,5 @@
 ### IntelliJ IDEA ###
 .idea/
-*.iml
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
@@ -24,40 +23,17 @@ bin/
 /nbdist/
 /.nb-gradle/
 
-### Visual Studio Code ###
+### VS Code ###
 .vscode/
 
 ### Mac OS ###
-.DS_Store
+.DS_StoreA n d e r s e n - c o u r s e / 
+ 
+ A n d e r s e n - c o u r s e / 
+ 
+ 
+# Ignore Gradle project-specific cache directory
+.gradle
 
-### Windows ###
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-
-### Gradle ###
-.gradle/
-build/
-
-### Java ###
-*.class
-*.jar
-*.war
-*.ear
-
-### Logs ###
-*.log
-
-### Temporary files ###
-*.swp
-*.swo
-*.bak
-*.tmp
-*~
-
-### Generated files ###
-/target/
-/out/
-/build/
-/.dist/
+# Ignore Gradle build output directory
+build
