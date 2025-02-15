@@ -1,15 +1,15 @@
-package org.example;
+package org.example.entity;
 
-class Reservation {
+public class Reservation {
     private int id;
-    private String userName;
+    private int user_id;
     private int spaceId;
     private String date;
     private String startTime;
     private String endTime;
-    public Reservation(int id, String userName, int spaceId, String date, String startTime, String endTime) {
+    public Reservation(int id, int user_id, int spaceId, String date, String startTime, String endTime) {
         this.id = id;
-        this.userName = userName;
+        this.user_id = user_id;
         this.spaceId = spaceId;
         this.date = date;
         this.startTime = startTime;
@@ -21,11 +21,11 @@ class Reservation {
     public void setId(int id) {
         this.id = id;
     }
-    public String getUserName() {
-        return userName;
+    public int getUserId() {
+        return user_id;
     }
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUserId(int user_id) {
+        this.user_id = user_id;
     }
     public int getSpaceId() {
         return spaceId;
@@ -52,6 +52,6 @@ class Reservation {
         this.endTime = endTime;
     }
     @Override public String toString() {
-        return "ID: " + id + ", User: " + userName + ", Space ID: " + spaceId + ", Date: " + date + ", Start Time: " + startTime + ", End Time: " + endTime;
+        return "ID: " + id + ", User_id: " + user_id + ", Space ID: " + spaceId + ", Date: " + date + ", Start Time: " + startTime + ", End Time: " + endTime;
     }
 }

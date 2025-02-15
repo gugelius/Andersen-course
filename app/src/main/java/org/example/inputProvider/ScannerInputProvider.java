@@ -1,4 +1,4 @@
-package org.example;
+package org.example.inputProvider;
 
 import java.util.Scanner;
 

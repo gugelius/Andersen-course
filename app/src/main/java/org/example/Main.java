@@ -1,5 +1,10 @@
 package org.example;
-
+// TODO Tests
+import org.example.classLoader.GugeliusClassLoader;
+import org.example.dao.ReservationService;
+import org.example.dao.SpaceService;
+import org.example.inputProvider.InputProvider;
+import org.example.inputProvider.ScannerInputProvider;
 import java.lang.reflect.Method;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -7,7 +12,8 @@ import java.util.Scanner;
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
     private static final InputProvider inputProvider = new ScannerInputProvider(scanner);
-    private static final CoworkingSpaceManager manager = new CoworkingSpaceManager(inputProvider);
+    private static final ReservationService reservationService = new ReservationService(inputProvider);
+    private static final SpaceService spaceService = new SpaceService(inputProvider);
     private static boolean exit = false;
     private static final String WELCOME_MSG = "Welcome to Coworking Space Reservation by GUGELIUSSS", BYE = "Bye!", CORRECT_VALUE_MSG = "Enter correct value, please!";
     private static final String MAIN_MENU = """
@@ -33,7 +39,7 @@ public class Main {
             String classPath = "C:\\Users\\GUGELIUSSS\\Desktop\\study\\Andersen-course\\app\\build\\classes\\java\\main";
             ClassLoader parentClassLoader = GugeliusClassLoader.class.getClassLoader();
             GugeliusClassLoader myClassLoader = new GugeliusClassLoader(classPath, parentClassLoader);
-            Class<?> loadedClass = myClassLoader.loadClass("org.example.TestMessage");
+            Class<?> loadedClass = myClassLoader.loadClass("org.example.classLoader.TestMessage");
             System.out.println("Class " + loadedClass.getName() + " successfully loaded.");
             Object instance = loadedClass.newInstance();
             Method method = loadedClass.getMethod("Message");
@@ -42,10 +48,10 @@ public class Main {
             e.printStackTrace();
         }
         System.out.println(WELCOME_MSG);
-        manager.loadSpaces();
+        spaceService.getAllSpaces();
+        reservationService.getAllReservations();
         mainMenu();
     }
-
     public static void mainMenu() {
         while (!exit) {
             System.out.println(MAIN_MENU);
@@ -54,7 +60,6 @@ public class Main {
                     case 1 -> adminMenu();
                     case 2 -> userMenu();
                     case 3 -> {
-                        manager.finalStateWriter();
                         exit = true;
                         System.out.println(BYE);
                     }
@@ -66,16 +71,15 @@ public class Main {
             }
         }
     }
-
     public static void adminMenu() {
         boolean backToMainMenu = false;
         while (!backToMainMenu) {
             System.out.println(ADMIN_MENU);
             try {
                 switch (scanner.nextInt()) {
-                    case 1 -> manager.createSpace();
-                    case 2 -> manager.removeSpace();
-                    case 3 -> manager.printAllReservations();
+                    case 1 -> spaceService.createSpace();
+                    case 2 -> spaceService.removeSpace();
+                    case 3 -> reservationService.printAllReservations();
                     case 4 -> backToMainMenu = true;
                     default -> System.out.println(CORRECT_VALUE_MSG);
                 }
@@ -90,9 +94,11 @@ public class Main {
         boolean backToMainMenu = false;
         System.out.println("Enter your name:");
         String userName = "";
-        while (userName.isEmpty()){
+        int user_id = 0;
+        while (userName.isEmpty() || user_id == 0){
             userName = scanner.nextLine().trim();
-            if(userName.isEmpty()){
+            user_id = reservationService.getUserId(userName);
+            if(userName.isEmpty() || user_id == 0){
                 System.out.println(CORRECT_VALUE_MSG);
             }
         }
@@ -101,10 +107,10 @@ public class Main {
             System.out.println(USER_MENU);
             try {
                 switch (scanner.nextInt()) {
-                    case 1 -> manager.printAvailableSpaces();
-                    case 2 -> manager.makeReservation(userName);
-                    case 3 -> manager.getUserReservations(userName);
-                    case 4 -> manager.cancelReservation(userName);
+                    case 1 -> spaceService.printAvailableSpaces();
+                    case 2 -> reservationService.makeReservation(user_id);
+                    case 3 -> reservationService.getUserReservations(user_id);
+                    case 4 -> reservationService.cancelReservation(user_id);
                     case 5 -> backToMainMenu = true;
                     default -> System.out.println(CORRECT_VALUE_MSG);
                 }
