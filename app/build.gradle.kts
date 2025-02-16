@@ -1,5 +1,7 @@
 plugins {
     application
+    id("org.springframework.boot") version "2.6.6"
+    id("io.spring.dependency-management") version "1.0.11.RELEASE"
 }
 
 repositories {
@@ -11,6 +13,12 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
     implementation("com.google.guava:guava:31.1-jre")
     testImplementation("org.mockito:mockito-core:4.0.0")
+    implementation("org.postgresql:postgresql:42.3.1")
+    implementation("org.hibernate:hibernate-core:5.6.9.Final")
+    implementation("javax.persistence:javax.persistence-api:2.2")
+    implementation("org.hibernate:hibernate-entitymanager:5.6.9.Final")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-web")
 }
 
 java {
@@ -32,4 +40,15 @@ tasks.jar {
         attributes["Main-Class"] = "org.example.Main"
     }
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+sourceSets {
+    main {
+        resources.srcDir("src/main/resources")
+    }
+}
+
+tasks.processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

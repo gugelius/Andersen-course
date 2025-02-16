@@ -1,7 +1,4 @@
 All reservations:
 All spaces:
 ID: 1, Type: office, Price: 200.0, Available: true
-ID: 2, Type: garden, Price: 250.0, Available: true
-ID: 3, Type: city-centre, Price: 300.0, Available: true
-ID: 4, Type: castle, Price: 270.0, Available: false
-ID: 5, Type: library, Price: 400.0, Available: true
+ID: 2, Type: new space, Price: 130.0, Available: true
