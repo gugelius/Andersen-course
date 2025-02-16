@@ -1,5 +1,7 @@
 plugins {
     application
+    id("org.springframework.boot") version "2.6.6"
+    id("io.spring.dependency-management") version "1.0.11.RELEASE"
 }
 
 repositories {
@@ -15,6 +17,8 @@ dependencies {
     implementation("org.hibernate:hibernate-core:5.6.9.Final")
     implementation("javax.persistence:javax.persistence-api:2.2")
     implementation("org.hibernate:hibernate-entitymanager:5.6.9.Final")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-web")
 }
 
 java {
