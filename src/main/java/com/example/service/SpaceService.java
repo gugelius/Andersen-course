@@ -3,7 +3,6 @@ package com.example.service;
 import com.example.entity.Space;
 import com.example.repository.ReservationRepository;
 import com.example.repository.SpaceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,11 +11,28 @@ import java.util.Optional;
 @Service
 public class SpaceService {
 
-    @Autowired
-    private SpaceRepository spaceRepository;
+    private static SpaceService instance;
 
-    @Autowired
+    private SpaceRepository spaceRepository;
     private ReservationRepository reservationRepository;
+
+    private SpaceService() {}
+
+    public static SpaceService getInstance() {
+        if (instance == null) {
+            synchronized (SpaceService.class) {
+                if (instance == null) {
+                    instance = new SpaceService();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public void setRepositories(SpaceRepository spaceRepository, ReservationRepository reservationRepository) {
+        this.spaceRepository = spaceRepository;
+        this.reservationRepository = reservationRepository;
+    }
 
     public List<Space> getAllSpaces() {
         return spaceRepository.findAll();
@@ -38,7 +54,8 @@ public class SpaceService {
             throw new IllegalArgumentException("Space with ID " + spaceId + " does not exist.");
         } else {
             spaceRepository.deleteById(spaceId);
-
         }
     }
 }
+
+

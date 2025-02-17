@@ -1,6 +1,9 @@
 package com.example;
 
 import com.example.controller.AdminController;
+import com.example.repository.ReservationRepository;
+import com.example.repository.SpaceRepository;
+import com.example.repository.UserRepository;
 import com.example.service.SpaceService;
 import com.example.service.ReservationService;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.ui.Model;
 import org.springframework.validation.support.BindingAwareModelMap;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -28,9 +32,24 @@ public class AdminControllerTest {
     @Mock
     private Model model;
 
+    @Mock
+    private SpaceRepository spaceRepository;
+
+    @Mock
+    private ReservationRepository reservationRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+
+        spaceService = mock(SpaceService.class);
+        reservationService = mock(ReservationService.class);
+        adminController = new AdminController(spaceRepository, reservationRepository, userRepository);
+        adminController.setSpaceService(spaceService);
+        adminController.setReservationService(reservationService);
     }
 
     @Test

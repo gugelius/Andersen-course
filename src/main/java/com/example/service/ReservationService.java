@@ -5,7 +5,6 @@ import com.example.entity.Space;
 import com.example.repository.ReservationRepository;
 import com.example.repository.SpaceRepository;
 import com.example.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,14 +15,30 @@ import java.util.Optional;
 @Service
 public class ReservationService {
 
-    @Autowired
+    private static ReservationService instance;
+
     private ReservationRepository reservationRepository;
-
-    @Autowired
     private SpaceRepository spaceRepository;
-
-    @Autowired
     private UserRepository userRepository;
+
+    private ReservationService() {}
+
+    public static ReservationService getInstance() {
+        if (instance == null) {
+            synchronized (ReservationService.class) {
+                if (instance == null) {
+                    instance = new ReservationService();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public void setRepositories(ReservationRepository reservationRepository, SpaceRepository spaceRepository, UserRepository userRepository) {
+        this.reservationRepository = reservationRepository;
+        this.spaceRepository = spaceRepository;
+        this.userRepository = userRepository;
+    }
 
     public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
@@ -69,3 +84,4 @@ public class ReservationService {
         reservationRepository.deleteById(reservationId);
     }
 }
+
