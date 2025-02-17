@@ -11,6 +11,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
     implementation("com.google.guava:guava:31.1-jre")
     testImplementation("org.mockito:mockito-core:4.0.0")
+    implementation("org.postgresql:postgresql:42.3.1")
 }
 
 java {

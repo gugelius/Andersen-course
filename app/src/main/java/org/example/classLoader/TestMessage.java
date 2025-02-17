@@ -1,4 +1,4 @@
-package org.example;
+package org.example.classLoader;
 
 public class TestMessage {
     public void Message(){

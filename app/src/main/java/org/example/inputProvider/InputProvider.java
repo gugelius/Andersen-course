@@ -1,4 +1,4 @@
-package org.example;
+package org.example.inputProvider;
 
 public interface InputProvider {
     String nextLine();
