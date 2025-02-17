@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Spaces</title>
+</head>
+<body>
+<h1>Manage Spaces</h1>
+<div th:if="${errorMessage}" style="color: red;">
+    <p th:text="${errorMessage}"></p>
+</div>
+<table>
+    <tr>
+        <th>Type</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    <tr th:each="space : ${spaces}">
+        <td th:text="${space.type}"></td>
+        <td th:text="${space.price}"></td>
+        <td th:text="${space.status ? 'Active' : 'Inactive'}"></td>
+        <td>
+            <form th:action="@{/admin/spaces/delete/{spaceId}(spaceId=${space.id})}" method="post">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+</table>
+<h2>Add New Space</h2>
+<form th:action="@{/admin/spaces/create}" method="post">
+    <label>Type:</label>
+    <input type="text" name="type" required>
+    <label>Price:</label>
+    <input type="number" name="price" required>
+    <label>Status:</label>
+    <input type="checkbox" name="status">
+    <button type="submit">Add Space</button>
+</form>
+<a th:href="@{/admin}">Admin Menu</a>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Reservations</title>
+</head>
+<body>
+<h1>Manage Reservations</h1>
+<div th:if="${errorMessage}" style="color: red;">
+    <p th:text="${errorMessage}"></p>
+</div>
+<table>
+    <tr>
+        <th>User ID</th>
+        <th>Space ID</th>
+        <th>Date</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Actions</th>
+    </tr>
+    <tr th:each="reservation : ${reservations}">
+        <td th:text="${reservation.userId}"></td>
+        <td th:text="${reservation.spaceId}"></td>
+        <td th:text="${reservation.date}"></td>
+        <td th:text="${reservation.startTime}"></td>
+        <td th:text="${reservation.endTime}"></td>
+        <td>
+            <form th:action="@{/admin/reservations/delete/{reservationId}(reservationId=${reservation.id})}" method="post">
+                <button type="submit">Cancel</button>
+            </form>
+        </td>
+    </tr>
+</table>
+<h2>Create New Reservation</h2>
+<form th:action="@{/admin/reservations/create}" method="post">
+    <label>User ID:</label>
+    <input type="number" name="userId" required>
+    <label>Space ID:</label>
+    <input type="number" name="spaceId" required>
+    <label>Date:</label>
+    <input type="date" name="date" required>
+    <label>Start Time:</label>
+    <input type="time" name="startTime" required>
+    <label>End Time:</label>
+    <input type="time" name="endTime" required>
+    <button type="submit">Create Reservation</button>
+</form>
+<a th:href="@{/admin}">Admin Menu</a>
+</body>
+</html>
