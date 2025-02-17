@@ -1,8 +1,8 @@
 package com.example.service;
 
 import com.example.entity.Space;
-import com.example.repository.SpaceRepository;
 import com.example.repository.ReservationRepository;
+import com.example.repository.SpaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,8 +34,11 @@ public class SpaceService {
         Optional<Space> space = spaceRepository.findById(spaceId);
         if (space.isPresent() && reservationRepository.existsBySpaceId(spaceId)) {
             throw new IllegalStateException("This space has associated reservations. Please remove the reservations first.");
+        } else if (!space.isPresent()) {
+            throw new IllegalArgumentException("Space with ID " + spaceId + " does not exist.");
         } else {
             spaceRepository.deleteById(spaceId);
+
         }
     }
 }

@@ -6,14 +6,14 @@
 </head>
 <body>
 <h1>Login</h1>
-<div th:if="${errorMessage}" style="color:red;">
-    <p th:text="${errorMessage}"></p>
-</div>
-<form th:action="@{/login}" method="post">
+<form th:action="@{/auth/authenticate}" method="post">
     <label>Username:</label>
     <input type="text" name="username" required>
+    <label>Password:</label>
+    <input type="password" name="password" required>
     <button type="submit">Login</button>
 </form>
-<a th:href="@{/}">Home</a>
+<div th:text="${errorMessage}" style="color: red;"></div>
+<a th:href="@{/register}">Register</a>
 </body>
 </html>

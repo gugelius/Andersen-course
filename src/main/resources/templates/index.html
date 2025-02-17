@@ -2,13 +2,20 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Reservation System</title>
+    <title>Login</title>
 </head>
 <body>
-<h1>Welcome to the Reservation System</h1>
-<ul>
-    <li><a th:href="@{/login}">User Login</a></li>
-    <li><a th:href="@{/admin}">Admin Menu</a></li>
-</ul>
+<h1>Login</h1>
+<div th:if="${errorMessage}" style="color:red;">
+    <p th:text="${errorMessage}"></p>
+</div>
+<form th:action="@{/api/auth/authenticate}" method="post">
+    <label>Username:</label>
+    <input type="text" name="username" required>
+    <label>Password:</label>
+    <input type="password" name="password" required>
+    <button type="submit">Login</button>
+</form>
+<a th:href="@{/register}">Register</a>
 </body>
 </html>

@@ -2,10 +2,14 @@ package com.example.controller;
 
 import com.example.entity.Space;
 import com.example.entity.Reservation;
+import com.example.entity.User;
 import com.example.service.SpaceService;
 import com.example.service.ReservationService;
 import com.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +24,7 @@ import java.util.stream.Collectors;
 public class UserController {
 
     @Autowired
-    private SpaceService SpaceService;
+    private SpaceService spaceService;
 
     @Autowired
     private ReservationService reservationService;
@@ -29,23 +33,24 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/menu")
-    public String userMenu(@RequestParam int userId, Model model) {
-        model.addAttribute("userId", userId);
+    public String userMenu(Model model) {
+        model.addAttribute("userId", getCurrentUserId());
         return "user_menu";
     }
 
     @GetMapping("/spaces")
-    public String viewUserSpaces(@RequestParam int userId, Model model) {
-        List<Space> availableSpaces = SpaceService.getAllSpaces().stream()
+    public String viewUserSpaces(Model model) {
+        List<Space> availableSpaces = spaceService.getAllSpaces().stream()
                 .filter(Space::isStatus)
                 .collect(Collectors.toList());
         model.addAttribute("spaces", availableSpaces);
-        model.addAttribute("userId", userId);
+        model.addAttribute("userId", getCurrentUserId());
         return "user_spaces";
     }
 
     @GetMapping("/reservations")
-    public String manageUserReservations(@RequestParam int userId, Model model) {
+    public String manageUserReservations(Model model) {
+        int userId = getCurrentUserId();
         List<Reservation> userReservations = reservationService.getUserReservations(userId);
         model.addAttribute("reservations", userReservations);
         model.addAttribute("userId", userId);
@@ -53,7 +58,8 @@ public class UserController {
     }
 
     @PostMapping("/reservations/create")
-    public String createUserReservation(@RequestParam int userId, @RequestParam int spaceId, @RequestParam String date, @RequestParam String startTime, @RequestParam String endTime, Model model) {
+    public String createUserReservation(@RequestParam int spaceId, @RequestParam String date, @RequestParam String startTime, @RequestParam String endTime, Model model) {
+        int userId = getCurrentUserId();
         List<Reservation> userReservations = reservationService.getUserReservations(userId);
         model.addAttribute("reservations", userReservations);
         model.addAttribute("userId", userId);
@@ -67,12 +73,22 @@ public class UserController {
             model.addAttribute("errorMessage", e.getMessage());
             return "user_reservations";
         }
-        return "redirect:/user/reservations?userId=" + userId;
+        return "redirect:/user/reservations";
     }
 
     @PostMapping("/reservations/delete/{reservationId}")
-    public String cancelUserReservation(@RequestParam int userId, @PathVariable int reservationId) {
+    public String cancelUserReservation(@PathVariable int reservationId, Model model) {
+        int userId = getCurrentUserId();
         reservationService.cancelReservation(reservationId);
-        return "redirect:/user/reservations?userId=" + userId;
+        return "redirect:/user/reservations";
+    }
+
+    private int getCurrentUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) auth.getPrincipal();
+        User user = userService.findByUsername(userDetails.getUsername()).orElseThrow();
+        System.out.println("Current user ID: " + user.getId());
+        System.out.println("Current user username: " + user.getUsername());
+        return user.getId();
     }
 }

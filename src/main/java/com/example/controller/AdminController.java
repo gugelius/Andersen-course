@@ -18,36 +18,41 @@ import java.util.List;
 public class AdminController {
 
     @Autowired
-    private SpaceService SpaceService;
+    private SpaceService spaceService;
 
     @Autowired
     private ReservationService reservationService;
 
     @GetMapping("/spaces")
     public String getAllSpaces(Model model) {
-        List<Space> spaces = SpaceService.getAllSpaces();
+        List<Space> spaces = spaceService.getAllSpaces();
         model.addAttribute("spaces", spaces);
-        return "spaces";
+        return "admin/spaces";
     }
 
     @PostMapping("/spaces/create")
     public String createSpace(@RequestParam String type, @RequestParam float price, @RequestParam(required = false) String status, Model model) {
-        List<Space> spaces = SpaceService.getAllSpaces();
-        model.addAttribute("spaces", spaces);
-
         if (type.isEmpty() || price <= 0) {
             model.addAttribute("errorMessage", "Invalid input: type must not be empty and price must be greater than 0.");
-            return "spaces";
+            return getAllSpaces(model);
         }
 
-        boolean isStatus = status != null && status.equals("true");
-        SpaceService.createSpace(type, price, isStatus);
+        boolean isStatus = "on".equals(status); // Изменяем проверку параметра status
+        spaceService.createSpace(type, price, isStatus);
         return "redirect:/admin/spaces";
     }
 
     @PostMapping("/spaces/delete/{spaceId}")
-    public String removeSpace(@PathVariable int spaceId) {
-        SpaceService.removeSpace(spaceId);
+    public String removeSpace(@PathVariable int spaceId, Model model) {
+        try {
+            spaceService.removeSpace(spaceId);
+        } catch (IllegalStateException e) {
+            model.addAttribute("errorMessage", "Cannot delete space with associated reservations. Please remove the reservations first.");
+            return getAllSpaces(model);
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return getAllSpaces(model);
+        }
         return "redirect:/admin/spaces";
     }
 
@@ -55,17 +60,14 @@ public class AdminController {
     public String getAllReservations(Model model) {
         List<Reservation> reservations = reservationService.getAllReservations();
         model.addAttribute("reservations", reservations);
-        return "reservations";
+        return "admin/reservations";
     }
 
     @PostMapping("/reservations/create")
     public String makeReservation(@RequestParam int userId, @RequestParam int spaceId, @RequestParam String date, @RequestParam String startTime, @RequestParam String endTime, Model model) {
-        List<Reservation> reservations = reservationService.getAllReservations();
-        model.addAttribute("reservations", reservations);
-
         if (userId <= 0 || spaceId <= 0 || date.isEmpty() || startTime.isEmpty() || endTime.isEmpty()) {
             model.addAttribute("errorMessage", "Invalid input: all fields are required and must be valid.");
-            return "reservations";
+            return getAllReservations(model);
         }
 
         try {
@@ -75,7 +77,7 @@ public class AdminController {
             reservationService.makeReservation(userId, spaceId, reservationDate, reservationStartTime, reservationEndTime);
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return "reservations";
+            return getAllReservations(model);
         }
         return "redirect:/admin/reservations";
     }

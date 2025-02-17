@@ -1,9 +1,10 @@
 package com.example.service;
 
-import com.example.entity.Space;
 import com.example.entity.Reservation;
-import com.example.repository.SpaceRepository;
+import com.example.entity.Space;
 import com.example.repository.ReservationRepository;
+import com.example.repository.SpaceRepository;
+import com.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,10 @@ public class ReservationService {
     private ReservationRepository reservationRepository;
 
     @Autowired
-    private SpaceRepository SpaceRepository;
+    private SpaceRepository spaceRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
@@ -34,7 +38,11 @@ public class ReservationService {
             throw new IllegalArgumentException("End time must be after start time.");
         }
 
-        Optional<Space> spaceOptional = SpaceRepository.findById(spaceId);
+        if (!userRepository.existsById(userId)) {
+            throw new IllegalArgumentException("User with ID " + userId + " does not exist.");
+        }
+
+        Optional<Space> spaceOptional = spaceRepository.findById(spaceId);
         if (!spaceOptional.isPresent()) {
             throw new IllegalArgumentException("Space with ID " + spaceId + " does not exist.");
         }
