@@ -1,4 +1,0 @@
-All reservations:
-All spaces:
-ID: 1, Type: office, Price: 200.0, Available: true
-ID: 2, Type: new space, Price: 130.0, Available: true

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Reservations</title>
+</head>
+<body>
+<h1>My Reservations</h1>
+<div th:if="${userId}" style="display:none;">
+    <input type="hidden" th:value="${userId}">
+</div>
+<div th:if="${errorMessage}" style="color:red;">
+    <p th:text="${errorMessage}"></p>
+</div>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>User ID</th>
+        <th>Space ID</th>
+        <th>Date</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="reservation : ${reservations}">
+        <td th:text="${reservation.id}"></td>
+        <td th:text="${reservation.userId}"></td>
+        <td th:text="${reservation.spaceId}"></td>
+        <td th:text="${reservation.date}"></td>
+        <td th:text="${reservation.startTime}"></td>
+        <td th:text="${reservation.endTime}"></td>
+        <td>
+            <form th:action="@{/user/reservations/delete/{reservationId}(reservationId=${reservation.id}, userId=${userId})}" method="post">
+                <button type="submit">Cancel</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>Create Reservation</h2>
+<form th:action="@{/user/reservations/create}" method="post">
+    <input type="hidden" name="userId" th:value="${userId}">
+    <label>Space ID:</label>
+    <input type="text" name="spaceId" required>
+    <label>Date:</label>
+    <input type="date" name="date" required>
+    <label>Start Time:</label>
+    <input type="time" name="startTime" required>
+    <label>End Time:</label>
+    <input type="time" name="endTime" required>
+    <button type="submit">Create</button>
+</form>
+
+<a th:href="@{|/user/menu?userId=${userId}|}">User Menu</a>
+</body>
+</html>
