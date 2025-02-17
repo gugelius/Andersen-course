@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Available Spaces</title>
+</head>
+<body>
+<h1>Available Spaces</h1>
+<div th:if="${userId}" style="display:none;">
+    <input type="hidden" th:value="${userId}">
+</div>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Type</th>
+        <th>Price</th>
+        <th>Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="space : ${spaces}">
+        <td th:text="${space.id}"></td>
+        <td th:text="${space.type}"></td>
+        <td th:text="${space.price}"></td>
+        <td th:text="${space.status}"></td>
+    </tr>
+    </tbody>
+</table>
+<a th:href="@{|/user/menu?userId=${userId}|}">User Menu</a>
+</body>
+</html>
