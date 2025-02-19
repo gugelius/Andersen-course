@@ -2,8 +2,9 @@ package com.example;
 
 import com.example.entity.Space;
 import com.example.entity.Reservation;
-import com.example.repository.SpaceRepository;
 import com.example.repository.ReservationRepository;
+import com.example.repository.SpaceRepository;
+import com.example.repository.UserRepository;
 import com.example.service.ReservationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,16 +30,21 @@ public class ReservationServiceTest {
     @Mock
     private SpaceRepository spaceRepository;
 
+    @Mock
+    private UserRepository userRepository;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+
+        reservationService = ReservationService.getInstance();
+        reservationService.setRepositories(reservationRepository, spaceRepository, userRepository);
     }
 
     @Test
     public void givenValidInput_whenMakeReservation_thenNoExceptionThrown() {
-        Space space = new Space();
-        space.setId(1);
-        when(spaceRepository.findById(1)).thenReturn(Optional.of(space));
+        when(userRepository.existsById(anyInt())).thenReturn(true);
+        when(spaceRepository.findById(anyInt())).thenReturn(Optional.of(new Space()));
 
         LocalDate date = LocalDate.of(2023, 4, 6);
         LocalTime startTime = LocalTime.of(10, 0);
@@ -74,7 +80,8 @@ public class ReservationServiceTest {
 
     @Test
     public void givenSpaceNotExists_whenMakeReservation_thenThrowIllegalArgumentException() {
-        when(spaceRepository.findById(1)).thenReturn(Optional.empty());
+        when(userRepository.existsById(anyInt())).thenReturn(true);
+        when(spaceRepository.findById(anyInt())).thenReturn(Optional.empty());
 
         LocalDate date = LocalDate.of(2023, 4, 6);
         LocalTime startTime = LocalTime.of(10, 0);

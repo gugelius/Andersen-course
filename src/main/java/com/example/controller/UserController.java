@@ -6,6 +6,9 @@ import com.example.entity.User;
 import com.example.service.SpaceService;
 import com.example.service.ReservationService;
 import com.example.service.UserService;
+import com.example.repository.ReservationRepository;
+import com.example.repository.SpaceRepository;
+import com.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,14 +26,17 @@ import java.util.stream.Collectors;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    private SpaceService spaceService;
-
-    @Autowired
-    private ReservationService reservationService;
+    private final SpaceService spaceService = SpaceService.getInstance();
+    private final ReservationService reservationService = ReservationService.getInstance();
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    public UserController(SpaceRepository spaceRepository, ReservationRepository reservationRepository, UserRepository userRepository) {
+        this.spaceService.setRepositories(spaceRepository, reservationRepository);
+        this.reservationService.setRepositories(reservationRepository, spaceRepository, userRepository);
+    }
 
     @GetMapping("/menu")
     public String userMenu(Model model) {
@@ -92,3 +98,4 @@ public class UserController {
         return user.getId();
     }
 }
+

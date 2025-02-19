@@ -4,6 +4,9 @@ import com.example.entity.Space;
 import com.example.entity.Reservation;
 import com.example.service.SpaceService;
 import com.example.service.ReservationService;
+import com.example.repository.SpaceRepository;
+import com.example.repository.ReservationRepository;
+import com.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,11 +20,25 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Autowired
     private SpaceService spaceService;
+    private ReservationService reservationService;
 
     @Autowired
-    private ReservationService reservationService;
+    public AdminController(SpaceRepository spaceRepository, ReservationRepository reservationRepository, UserRepository userRepository) {
+        this.spaceService = SpaceService.getInstance();
+        this.spaceService.setRepositories(spaceRepository, reservationRepository);
+
+        this.reservationService = ReservationService.getInstance();
+        this.reservationService.setRepositories(reservationRepository, spaceRepository, userRepository);
+    }
+
+    public void setSpaceService(SpaceService spaceService) {
+        this.spaceService = spaceService;
+    }
+
+    public void setReservationService(ReservationService reservationService) {
+        this.reservationService = reservationService;
+    }
 
     @GetMapping("/spaces")
     public String getAllSpaces(Model model) {
@@ -37,7 +54,7 @@ public class AdminController {
             return getAllSpaces(model);
         }
 
-        boolean isStatus = "on".equals(status); // Изменяем проверку параметра status
+        boolean isStatus = "on".equals(status);
         spaceService.createSpace(type, price, isStatus);
         return "redirect:/admin/spaces";
     }

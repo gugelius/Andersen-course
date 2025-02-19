@@ -2,6 +2,9 @@ package com.example.controller;
 
 import com.example.entity.Reservation;
 import com.example.service.ReservationService;
+import com.example.repository.ReservationRepository;
+import com.example.repository.SpaceRepository;
+import com.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,8 +17,13 @@ import java.util.List;
 @Controller
 public class ReservationController {
 
+    private final ReservationService reservationService;
+
     @Autowired
-    private ReservationService reservationService;
+    public ReservationController(ReservationRepository reservationRepository, SpaceRepository spaceRepository, UserRepository userRepository) {
+        this.reservationService = ReservationService.getInstance();
+        this.reservationService.setRepositories(reservationRepository, spaceRepository, userRepository);
+    }
 
     @GetMapping("/reservations")
     public String getAllReservations(Model model) {
@@ -39,3 +47,4 @@ public class ReservationController {
         return "redirect:/reservations";
     }
 }
+
